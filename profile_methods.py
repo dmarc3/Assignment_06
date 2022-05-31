@@ -45,7 +45,7 @@ def reset_databases(typ: int):
             status_collection5 = main5.init_status_collection(mongo)
             status_collection5.database.drop()
 
-def time_load_users(filename: str) -> bool:
+def time_load_users(filename: str):
     ''' Test load accounts method '''
     time3 = 0
 
@@ -61,11 +61,12 @@ def time_load_users(filename: str) -> bool:
             assert result == True
             if end - start > time5:
                 time5 = end - start
-            reset_databases(1)
+            if i != NUM-1:
+                reset_databases(1)
 
     return time3, time5
 
-def time_load_status_updates(filename: str) -> bool:
+def time_load_status_updates(filename: str):
     ''' Test load status method '''
     time3 = 0
     # Load users 5 times via Assignment_05
@@ -80,11 +81,12 @@ def time_load_status_updates(filename: str) -> bool:
             assert result == True
             if end - start > time5:
                 time5 = end - start
-            reset_databases(2)
+            if i != NUM - 1:
+                reset_databases(2)
 
     return time3, time5
 
-def time_add_user(user_id: str, email: str, user_name: str, user_last_name: str) -> bool:
+def time_add_user():
     ''' Test load status method '''
     time3 = 0
     # Load users 5 times via Assignment_05
@@ -94,22 +96,22 @@ def time_add_user(user_id: str, email: str, user_name: str, user_last_name: str)
         with sn5.MongoDBConnection() as mongo:
             print(f'  Adding user via Assignment_05... {i+1}')
             start = timer()
-            result = main5.add_user(user_id,
-                                    email,
-                                    user_name,
-                                    user_last_name,
+            result = main5.add_user('test123',
+                                    'test@gmail.com',
+                                    'test',
+                                    'tester',
                                     main5.init_user_collection(mongo))
             end = timer()
             assert result.acknowledged == True
             if end - start > time5:
                 time5 = end - start
-            result = main5.delete_user(user_id,
+            result = main5.delete_user('test123',
                                        main5.init_user_collection(mongo))
             assert result == True
 
     return time3, time5
 
-def time_add_status(user_id: str, status_id: str, status_text: str) -> bool:
+def time_add_status():
     ''' Test load status method '''
     time3 = 0
     # Load users 5 times via Assignment_05
@@ -119,17 +121,158 @@ def time_add_status(user_id: str, status_id: str, status_text: str) -> bool:
         with sn5.MongoDBConnection() as mongo:
             print(f'  Adding status via Assignment_05... {i+1}')
             start = timer()
-            result = main5.add_status(user_id,
-                                      status_id,
-                                      status_text,
+            result = main5.add_status('test123',
+                                      'test123_00001',
+                                      'Some silly status!',
                                       main5.init_status_collection(mongo))
             end = timer()
             assert result.acknowledged == True
             if end - start > time5:
                 time5 = end - start
-            result = main5.delete_status(status_id,
+            result = main5.delete_status('test123_00001',
                                          main5.init_status_collection(mongo))
             assert result == True
+
+    return time3, time5
+
+def time_update_user():
+    ''' Test load status method '''
+    time3 = 0
+    # Load users 5 times via Assignment_05
+    # Save max time
+    time5 = 0
+    for i in range(NUM):
+        with sn5.MongoDBConnection() as mongo:
+            print(f'  Updating user via Assignment_05... {i+1}')
+            start = timer()
+            result = main5.update_user('Larisa.Yesima75',
+                                       'test@gmail.com',
+                                       'Larisa',
+                                       'Yesima',
+                                       main5.init_user_collection(mongo))
+            end = timer()
+            assert result.acknowledged == True
+            if end - start > time5:
+                time5 = end - start
+            result = main5.update_user('Larisa.Yesima75',
+                                       'Larisa.Yesima75@testmail.com',
+                                       'Larisa',
+                                       'Yesima',
+                                       main5.init_user_collection(mongo))
+            assert result.acknowledged == True
+
+    return time3, time5
+
+def time_update_status():
+    ''' Test load status method '''
+    time3 = 0
+    # Update status 5 times via Assignment_05
+    # Save max time
+    time5 = 0
+    for i in range(NUM):
+        with sn5.MongoDBConnection() as mongo:
+            print(f'  Updating status via Assignment_05... {i+1}')
+            start = timer()
+            result = main5.update_status('Roshelle.Pironi69_275',
+                                         'Roshelle.Pironi69',
+                                         'test status text',
+                                         main5.init_status_collection(mongo))
+            end = timer()
+            assert result == True
+            if end - start > time5:
+                time5 = end - start
+            result = main5.update_status('Roshelle.Pironi69_275',
+                                         'Roshelle.Pironi69',
+                                         'didactic beginner counsel snotty cushion',
+                                         main5.init_status_collection(mongo))
+            assert result == True
+
+    return time3, time5
+
+def time_search_user():
+    ''' Time search_user method '''
+    time3 = 0
+    # Load users 5 times via Assignment_05
+    # Save max time
+    time5 = 0
+    for i in range(NUM):
+        with sn5.MongoDBConnection() as mongo:
+            print(f'  Searching user via Assignment_05... {i+1}')
+            start = timer()
+            result = main5.search_user('Roshelle.Pironi69',
+                                       main5.init_user_collection(mongo))
+            end = timer()
+            assert bool(result) == True
+            if end - start > time5:
+                time5 = end - start
+
+    return time3, time5
+
+def time_search_status():
+    ''' Time search_status method '''
+    time3 = 0
+    # Search users 5 times via Assignment_05
+    # Save max time
+    time5 = 0
+    for i in range(NUM):
+        with sn5.MongoDBConnection() as mongo:
+            print(f'  Searching status via Assignment_05... {i+1}')
+            start = timer()
+            result = main5.search_status('Roshelle.Pironi69_275',
+                                         main5.init_status_collection(mongo))
+            end = timer()
+            assert bool(result) == True
+            if end - start > time5:
+                time5 = end - start
+
+    return time3, time5
+
+def time_delete_user():
+    ''' Time delete_user method '''
+    time3 = 0
+    # Load users 5 times via Assignment_05
+    # Save max time
+    time5 = 0
+    for i in range(NUM):
+        with sn5.MongoDBConnection() as mongo:
+            print(f'  Deleting user via Assignment_05... {i+1}')
+            start = timer()
+            result = main5.delete_user('Roshelle.Pironi69',
+                                       main5.init_user_collection(mongo))
+            end = timer()
+            assert result == True
+            if end - start > time5:
+                time5 = end - start
+            result = main5.add_user('Roshelle.Pironi69',
+                                    'Roshelle.Pironi69@goodmail.com',
+                                    'Roshelle',
+                                    'Pironi',
+                                    main5.init_user_collection(mongo))
+            assert result.acknowledged == True
+
+    return time3, time5
+
+def time_delete_status():
+    ''' Time delete_status method '''
+    time3 = 0
+    # Delete status 5 times via Assignment_05
+    # Save max time
+    time5 = 0
+    for i in range(NUM):
+        with sn5.MongoDBConnection() as mongo:
+            print(f'  Deleting status via Assignment_05... {i+1}')
+            start = timer()
+            result = main5.delete_status('Zondra.Esme53_383',
+                                         main5.init_status_collection(mongo))
+            end = timer()
+            assert result == True
+            if end - start > time5:
+                time5 = end - start
+            result = main5.add_status('Zondra.Esme53',
+                                      'Zondra.Esme53_383',
+                                      'annoying advertisement bounce venomous battle',
+                                      main5.init_status_collection(mongo))
+            assert result.acknowledged == True
 
     return time3, time5
 
@@ -171,21 +314,58 @@ if __name__ == '__main__':
     # time_add_user
     print('\n'+'Timing add_user for Assignment #3 and #5:')
     print('-----------------------------------------')
-    times = time_add_user('test123',
-                          'test@gmail.com',
-                          'test',
-                          'tester')
+    times = time_add_user()
     print_times(times)
     results['add_user'] = times
 
     # time_add_status
     print('\n'+'Timing add_status for Assignment #3 and #5:')
     print('-----------------------------------------')
-    times = time_add_status('test123',
-                          'test123_00001',
-                          'Some silly status!')
+    times = time_add_status()
     print_times(times)
     results['add_status'] = times
+
+    # time_update_user
+    print('\n'+'Timing update_user for Assignment #3 and #5:')
+    print('-----------------------------------------')
+    times = time_update_user()
+    print_times(times)
+    results['update_user'] = times
+
+    # time_update_status
+    print('\n'+'Timing update_status for Assignment #3 and #5:')
+    print('-----------------------------------------')
+    times = time_update_status()
+    print_times(times)
+    results['update_status'] = times
+
+    # time_search_user
+    print('\n'+'Timing search_user for Assignment #3 and #5:')
+    print('-----------------------------------------')
+    times = time_search_user()
+    print_times(times)
+    results['search_user'] = times
+
+    # time_search_status
+    print('\n'+'Timing search_status for Assignment #3 and #5:')
+    print('-----------------------------------------')
+    times = time_search_status()
+    print_times(times)
+    results['search_status'] = times  
+
+    # time_delete_user
+    print('\n'+'Timing delete_user for Assignment #3 and #5:')
+    print('-----------------------------------------')
+    times = time_delete_user()
+    print_times(times)
+    results['delete_user'] = times  
+
+    # time_delete_status
+    print('\n'+'Timing delete_status for Assignment #3 and #5:')
+    print('-----------------------------------------')
+    times = time_delete_status()
+    print_times(times)
+    results['delete_status'] = times
 
     # Print compiled results
     print('Function              Assignment_03  Assignment_05')
