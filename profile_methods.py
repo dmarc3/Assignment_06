@@ -32,9 +32,8 @@ def reset_databases(typ: int):
     if del_status:
         main3.init_status_collection()
         if sn3.Status.table_exists():
-            sn3.Status.delete().execute()
-            # sn3.Status.drop_table()
-            # sn3.db.create_tables([sn3.Status])
+            sn3.Status.drop_table()
+            sn3.db.create_tables([sn3.Status])
     # Assignment 05 Database
     if del_users:
         with sn5.MongoDBConnection() as mongo:
@@ -69,18 +68,18 @@ def time_load_users(filename: str) -> bool:
             start = timer()
             result = main5.load_users(filename, main5.init_user_collection(mongo))
             end = timer()
-            # assert result == True
-            if end - start > time5:
-                time5 = end - start
-            reset_databases(1)
+            if result:
+                if end - start > time5:
+                    time5 = end - start
+                reset_databases(1)
 
     return time3, time5
 
 
 def time_load_status_updates(filename: str) -> bool:
     ''' Test load status method '''
-    reset_databases(2)
     time3 = 0
+    main3.load_users('accounts.csv', main3.init_user_collection())
     status_collection3 = main3.init_status_collection()
     for i in range(NUM):
         print(f'  Loading {filename} via Assignment_03 for time_load_status_updates... {i+1}')
@@ -156,6 +155,7 @@ def time_add_user(user_id: str, email: str, user_name: str, user_last_name: str)
 def time_add_status(user_id: str, status_id: str, status_text: str) -> bool:
     ''' Test load status method '''
     time3 = 0
+    main3.load_users('accounts.csv', main3.init_user_collection())
     status_collection3 = main3.init_status_collection()
     for i in range(NUM):
         print(f'  Adding status via Assignment_03... {i+1}')
@@ -209,7 +209,7 @@ if __name__ == '__main__':
     print(f'\nNUM set to: {NUM}')
 
     # Reset databases
-    # reset_databases(0)
+    reset_databases(0)
 
     # Final results dictionary
     results = {'load_users': '',
@@ -217,12 +217,12 @@ if __name__ == '__main__':
                'add_user': '',
                'add_status': ''}
 
-    # # time_load_users
-    # print('\n'+'Timing load_users for Assignment #3 and #5:')
-    # print('-------------------------------------------')
-    # times = time_load_users('accounts.csv')
-    # print_times(times)
-    # results['load_users'] = times
+    # time_load_users
+    print('\n'+'Timing load_users for Assignment #3 and #5:')
+    print('-------------------------------------------')
+    times = time_load_users('accounts.csv')
+    print_times(times)
+    results['load_users'] = times
 
     # time_load_status_updates
     print('\n'+'Timing load_status_updates for Assignment #3 and #5:')
@@ -231,29 +231,29 @@ if __name__ == '__main__':
     print_times(times)
     results['load_status_updates'] = times
 
-    # # time_add_user
-    # print('\n'+'Timing add_user for Assignment #3 and #5:')
-    # print('-----------------------------------------')
-    # times = time_add_user('test123',
-    #                       'test@gmail.com',
-    #                       'test',
-    #                       'tester')
-    # print_times(times)
-    # results['add_user'] = times
-    #
-    # # time_add_status
-    # print('\n'+'Timing add_status for Assignment #3 and #5:')
-    # print('-----------------------------------------')
-    # times = time_add_status('test123',
-    #                       'test123_00001',
-    #                       'Some silly status!')
-    # print_times(times)
-    # results['add_status'] = times
-    #
-    # # Print compiled results
-    # print('Function              Assignment_03  Assignment_05')
-    # print('--------------------------------------------------')
-    # for key, value in results.items():
-    #     print(key.ljust(20) + \
-    #           '  '+'{0:.8f}'.format(value[0]).rjust(13) + \
-    #           '  '+'{0:.8f}'.format(value[1]).rjust(13))
+    # time_add_user
+    print('\n'+'Timing add_user for Assignment #3 and #5:')
+    print('-----------------------------------------')
+    times = time_add_user('test123',
+                          'test@gmail.com',
+                          'test',
+                          'tester')
+    print_times(times)
+    results['add_user'] = times
+
+    # time_add_status
+    print('\n'+'Timing add_status for Assignment #3 and #5:')
+    print('-----------------------------------------')
+    times = time_add_status('test123',
+                          'test123_00001',
+                          'Some silly status!')
+    print_times(times)
+    results['add_status'] = times
+
+    # Print compiled results
+    print('Function              Assignment_03  Assignment_05')
+    print('--------------------------------------------------')
+    for key, value in results.items():
+        print(key.ljust(20) + \
+              '  '+'{0:.8f}'.format(value[0]).rjust(13) + \
+              '  '+'{0:.8f}'.format(value[1]).rjust(13))
