@@ -32,8 +32,9 @@ def reset_databases(typ: int):
     if del_status:
         main3.init_status_collection()
         if sn3.Status.table_exists():
-            sn3.Status.drop_table()
-            sn3.db.create_tables([sn3.Status])
+            sn3.Status.delete().execute()
+            # sn3.Status.drop_table()
+            # sn3.db.create_tables([sn3.Status])
     # Assignment 05 Database
     if del_users:
         with sn5.MongoDBConnection() as mongo:
@@ -78,6 +79,7 @@ def time_load_users(filename: str) -> bool:
 
 def time_load_status_updates(filename: str) -> bool:
     ''' Test load status method '''
+    reset_databases(2)
     time3 = 0
     status_collection3 = main3.init_status_collection()
     for i in range(NUM):
@@ -207,7 +209,7 @@ if __name__ == '__main__':
     print(f'\nNUM set to: {NUM}')
 
     # Reset databases
-    reset_databases(0)
+    # reset_databases(0)
 
     # Final results dictionary
     results = {'load_users': '',
@@ -215,19 +217,19 @@ if __name__ == '__main__':
                'add_user': '',
                'add_status': ''}
 
-    # time_load_users
-    print('\n'+'Timing load_users for Assignment #3 and #5:')
-    print('-------------------------------------------')
-    times = time_load_users('accounts.csv')
-    print_times(times)
-    results['load_users'] = times
-
-    # # time_load_status_updates
-    # print('\n'+'Timing load_status_updates for Assignment #3 and #5:')
-    # print('----------------------------------------------------')
-    # times = time_load_status_updates('status_updates.csv')
+    # # time_load_users
+    # print('\n'+'Timing load_users for Assignment #3 and #5:')
+    # print('-------------------------------------------')
+    # times = time_load_users('accounts.csv')
     # print_times(times)
-    # results['load_status_updates'] = times
+    # results['load_users'] = times
+
+    # time_load_status_updates
+    print('\n'+'Timing load_status_updates for Assignment #3 and #5:')
+    print('----------------------------------------------------')
+    times = time_load_status_updates('status_updates.csv')
+    print_times(times)
+    results['load_status_updates'] = times
 
     # # time_add_user
     # print('\n'+'Timing add_user for Assignment #3 and #5:')
