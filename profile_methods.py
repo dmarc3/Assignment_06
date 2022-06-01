@@ -305,7 +305,7 @@ def time_search_user():
             result = main5.search_user('Roshelle.Pironi69',
                                        main5.init_user_collection(mongo))
             end = timer()
-            assert bool(result) == True
+            assert bool(result)
             if end - start > time5:
                 time5 = end - start
 
@@ -315,6 +315,15 @@ def time_search_user():
 def time_search_status():
     ''' Time search_status method '''
     time3 = 0
+    for i in range(NUM):
+        print(f'  Searching status via Assignment_03... {i + 1}')
+        start = timer()
+        result = main3.search_status('Roshelle.Pironi69_275',
+                                     main3.init_status_collection())
+        end = timer()
+        if bool(result):
+            if end - start > time3:
+                time3 = end - start
     # Search users 5 times via Assignment_05
     # Save max time
     time5 = 0
@@ -334,6 +343,20 @@ def time_search_status():
 def time_delete_user():
     ''' Time delete_user method '''
     time3 = 0
+    for i in range(NUM):
+        print(f'  Deleting user via Assignment_03... {i + 1}')
+        start = timer()
+        result = main3.delete_user('Roshelle.Pironi69',
+                                   main3.init_user_collection())
+        end = timer()
+        main3.add_user('Roshelle.Pironi69',
+                       'Roshelle.Pironi69@goodmail.com',
+                       'Roshelle',
+                       'Pironi',
+                       main3.init_user_collection())
+        if result:
+            if end - start > time3:
+                time3 = end - start
     # Load users 5 times via Assignment_05
     # Save max time
     time5 = 0
@@ -356,9 +379,25 @@ def time_delete_user():
 
     return time3, time5
 
+
 def time_delete_status():
     ''' Time delete_status method '''
     time3 = 0
+    for i in range(NUM):
+        print(f'  Deleting status via Assignment_03... {i + 1}')
+        start = timer()
+        result = main3.delete_status('Zondra.Esme53_383',
+                                     main3.init_status_collection())
+        end = timer()
+        assert result == True
+        if end - start > time3:
+            time3 = end - start
+        result = main3.add_status('Zondra.Esme53',
+                                  'Zondra.Esme53_383',
+                                  'annoying advertisement bounce venomous battle',
+                                  main3.init_status_collection())
+        end = timer()
+        assert result == True
     # Delete status 5 times via Assignment_05
     # Save max time
     time5 = 0
