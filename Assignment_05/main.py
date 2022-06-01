@@ -222,9 +222,7 @@ def validate_user_id(user_id):
     '''
     Validates user_id
     '''
-    # Checks if space in user_id
-    if ' ' in user_id:
-        return False
+    user_id = user_id.replace(' ', '_')
     # Checks if user_id be converted to integer
     try:
         int(user_id)
@@ -237,6 +235,7 @@ def validate_email(email):
     '''
     Validates email
     '''
+    email = email.replace(' ', '')
     # Validates email address via regex
     # Source: https://stackoverflow.com/a/8022584
     regex = r"^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$"
@@ -249,6 +248,7 @@ def validate_name(name):
     '''
     Validates user_name
     '''
+    name = name.replace(' ', '')
     # Check if name contains only letters
     for chars in ['-', "'"]:
         name = name.replace(chars, '')
