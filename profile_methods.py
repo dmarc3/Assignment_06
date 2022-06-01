@@ -385,30 +385,47 @@ def time_delete_user():
 
     return time3, time5
 
-#
-# def time_delete_status():
-#     ''' Time delete_status method '''
-#     time3 = 0
-#     # Delete status 5 times via Assignment_05
-#     # Save max time
-#     time5 = 0
-#     for i in range(NUM):
-#         with sn5.MongoDBConnection() as mongo:
-#             print(f'  Deleting status via Assignment_05... {i+1}')
-#             start = timer()
-#             result = main5.delete_status('Zondra.Esme53_383',
-#                                          main5.init_status_collection(mongo))
-#             end = timer()
-#             assert result == True
-#             if end - start > time5:
-#                 time5 = end - start
-#             result = main5.add_status('Zondra.Esme53',
-#                                       'Zondra.Esme53_383',
-#                                       'annoying advertisement bounce venomous battle',
-#                                       main5.init_status_collection(mongo))
-#             assert result.acknowledged == True
-#
-#     return time3, time5
+
+def time_delete_status():
+    ''' Time delete_status method '''
+    time3 = 0
+    main3.load_users('accounts.csv', main3.init_user_collection())
+    main3.load_status_updates('status_updates.csv', main3.init_status_collection())
+    for i in range(NUM):
+        print(f'  Deleting status via Assignment_03... {i + 1}')
+        start = timer()
+        result = main3.delete_status('Zondra.Esme53_383',
+                                     main3.init_status_collection())
+        end = timer()
+        assert result == True
+        if end - start > time3:
+            time3 = end - start
+        result = main3.add_status('Zondra.Esme53',
+                                  'Zondra.Esme53_383',
+                                  'annoying advertisement bounce venomous battle',
+                                  main3.init_status_collection())
+        end = timer()
+        assert result == True
+    # Delete status 5 times via Assignment_05
+    # Save max time
+    time5 = 0
+    for i in range(NUM):
+        with sn5.MongoDBConnection() as mongo:
+            print(f'  Deleting status via Assignment_05... {i+1}')
+            start = timer()
+            result = main5.delete_status('Zondra.Esme53_383',
+                                         main5.init_status_collection(mongo))
+            end = timer()
+            assert result == True
+            if end - start > time5:
+                time5 = end - start
+            result = main5.add_status('Zondra.Esme53',
+                                      'Zondra.Esme53_383',
+                                      'annoying advertisement bounce venomous battle',
+                                      main5.init_status_collection(mongo))
+            assert result.acknowledged == True
+
+    return time3, time5
 
 
 def print_times(time_list: list):
@@ -433,66 +450,66 @@ if __name__ == '__main__':
                'add_user': '',
                'add_status': ''}
 
-    # # time_load_users
-    # print('\n'+'Timing load_users for Assignment #3 and #5:')
-    # print('-------------------------------------------')
-    # times = time_load_users('accounts.csv')
-    # print_times(times)
-    # results['load_users'] = times
-    #
-    # # time_load_status_updates
-    # print('\n'+'Timing load_status_updates for Assignment #3 and #5:')
-    # print('----------------------------------------------------')
-    # times = time_load_status_updates('status_updates.csv')
-    # print_times(times)
-    # results['load_status_updates'] = times
-    #
-    # # time_add_user
-    # print('\n'+'Timing add_user for Assignment #3 and #5:')
-    # print('-----------------------------------------')
-    # times = time_add_user('test123',
-    #                       'test@gmail.com',
-    #                       'test',
-    #                       'tester')
-    # print_times(times)
-    # results['add_user'] = times
+    # time_load_users
+    print('\n'+'Timing load_users for Assignment #3 and #5:')
+    print('-------------------------------------------')
+    times = time_load_users('accounts.csv')
+    print_times(times)
+    results['load_users'] = times
 
-    # time_add_status
-    # print('\n'+'Timing add_status for Assignment #3 and #5:')
-    # print('-----------------------------------------')
-    # times = time_add_status('test123',
-    #                         'test123_00001',
-    #                         'Some silly status!')
-    # print_times(times)
-    # results['add_status'] = times
-    #
-    # # time_update_user
-    # print('\n'+'Timing update_user for Assignment #3 and #5:')
-    # print('-----------------------------------------')
-    # times = time_update_user()
-    # print_times(times)
-    # results['update_user'] = times
+    # time_load_status_updates
+    print('\n'+'Timing load_status_updates for Assignment #3 and #5:')
+    print('----------------------------------------------------')
+    times = time_load_status_updates('status_updates.csv')
+    print_times(times)
+    results['load_status_updates'] = times
 
-    # # time_update_status
-    # print('\n'+'Timing update_status for Assignment #3 and #5:')
-    # print('-----------------------------------------')
-    # times = time_update_status()
-    # print_times(times)
-    # results['update_status'] = times
+    # time_add_user
+    print('\n'+'Timing add_user for Assignment #3 and #5:')
+    print('-----------------------------------------')
+    times = time_add_user('test123',
+                          'test@gmail.com',
+                          'test',
+                          'tester')
+    print_times(times)
+    results['add_user'] = times
 
-    # # time_search_user
-    # print('\n'+'Timing search_user for Assignment #3 and #5:')
-    # print('-----------------------------------------')
-    # times = time_search_user()
-    # print_times(times)
-    # results['search_user'] = times
+    time_add_status
+    print('\n'+'Timing add_status for Assignment #3 and #5:')
+    print('-----------------------------------------')
+    times = time_add_status('test123',
+                            'test123_00001',
+                            'Some silly status!')
+    print_times(times)
+    results['add_status'] = times
 
-    # # time_search_status
-    # print('\n'+'Timing search_status for Assignment #3 and #5:')
-    # print('-----------------------------------------')
-    # times = time_search_status()
-    # print_times(times)
-    # results['search_status'] = times
+    # time_update_user
+    print('\n'+'Timing update_user for Assignment #3 and #5:')
+    print('-----------------------------------------')
+    times = time_update_user()
+    print_times(times)
+    results['update_user'] = times
+
+    # time_update_status
+    print('\n'+'Timing update_status for Assignment #3 and #5:')
+    print('-----------------------------------------')
+    times = time_update_status()
+    print_times(times)
+    results['update_status'] = times
+
+    # time_search_user
+    print('\n'+'Timing search_user for Assignment #3 and #5:')
+    print('-----------------------------------------')
+    times = time_search_user()
+    print_times(times)
+    results['search_user'] = times
+
+    # time_search_status
+    print('\n'+'Timing search_status for Assignment #3 and #5:')
+    print('-----------------------------------------')
+    times = time_search_status()
+    print_times(times)
+    results['search_status'] = times
 
     # time_delete_user
     print('\n'+'Timing delete_user for Assignment #3 and #5:')
@@ -500,6 +517,13 @@ if __name__ == '__main__':
     times = time_delete_user()
     print_times(times)
     results['delete_user'] = times
+
+    # time_delete_status
+    print('\n'+'Timing delete_status for Assignment #3 and #5:')
+    print('-----------------------------------------')
+    times = time_delete_status()
+    print_times(times)
+    results['delete_status'] = times
 
     # # Print compiled results
     # print('Function              Assignment_03  Assignment_05')
