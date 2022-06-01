@@ -4,13 +4,13 @@ Kathleen Wong focused on profiling Assignment_03 and peewee implementation.
 Marcus Bakke focused on profiling Assignment_05 and MongoDB implementation.
 '''
 from timeit import default_timer as timer
-import ipdb
 import Assignment_03.main as main3
 import Assignment_03.socialnetwork_model as sn3
 import Assignment_05.main as main5
 import Assignment_05.socialnetwork_db as sn5
 
-NUM = 5
+NUM = 1
+
 
 def reset_databases(typ: int):
     ''' Method to remove data in databases '''
@@ -25,16 +25,15 @@ def reset_databases(typ: int):
         del_status = True
     # Assignment 03 Database
     if del_users:
-        user_collection3 = main3.init_user_collection()
-        if user_collection3.database.table_exists():
-            user_collection3.database.drop_table()
+        main3.init_user_collection()
+        if sn3.Users.table_exists():
+            sn3.Users.drop_table()
             sn3.db.create_tables([sn3.Users])
     if del_status:
-        status_collection3 = main3.init_status_collection()
-        if status_collection3.database.table_exists():
-            status_collection3.database.drop_table()
+        main3.init_status_collection()
+        if sn3.Status.table_exists():
+            sn3.Status.drop_table()
             sn3.db.create_tables([sn3.Status])
-    
     # Assignment 05 Database
     if del_users:
         with sn5.MongoDBConnection() as mongo:
@@ -45,9 +44,20 @@ def reset_databases(typ: int):
             status_collection5 = main5.init_status_collection(mongo)
             status_collection5.database.drop()
 
+
 def time_load_users(filename: str):
     ''' Test load accounts method '''
     time3 = 0
+    user_collection3 = main3.init_user_collection()
+    for i in range(NUM):
+        print(f'  Loading {filename} via Assignment_03 for time_load_users... {i+1}')
+        start = timer()
+        result = main3.load_users(filename, user_collection3)
+        end = timer()
+        if result:
+            if end - start > time3:
+                time3 = end - start
+            reset_databases(1)
 
     # Load users 5 times via Assignment_05
     # Save max time
@@ -58,7 +68,7 @@ def time_load_users(filename: str):
             start = timer()
             result = main5.load_users(filename, main5.init_user_collection(mongo))
             end = timer()
-            assert result == True
+            assert result
             if end - start > time5:
                 time5 = end - start
             if i != NUM-1:
@@ -66,19 +76,29 @@ def time_load_users(filename: str):
 
     return time3, time5
 
+
 def time_load_status_updates(filename: str):
     ''' Test load status method '''
     time3 = 0
-    # Load users 5 times via Assignment_05
-    # Save max time
+    main3.load_users('accounts.csv', main3.init_user_collection())
+    status_collection3 = main3.init_status_collection()
+    for i in range(NUM):
+        print(f'  Loading {filename} via Assignment_03 for time_load_status_updates... {i+1}')
+        start = timer()
+        result = main3.load_status_updates(filename, status_collection3)
+        end = timer()
+        if result:
+            if end - start > time3:
+                time3 = end - start
+        reset_databases(2)
     time5 = 0
     for i in range(NUM):
         with sn5.MongoDBConnection() as mongo:
-            print(f'  Loading {filename} via Assignment_05... {i+1}')
+            print(f'  Loading {filename} via Assignment_05 for time_load_status_updates... {i+1}')
             start = timer()
             result = main5.load_status_updates(filename, main5.init_status_collection(mongo))
             end = timer()
-            assert result == True
+            assert result
             if end - start > time5:
                 time5 = end - start
             if i != NUM - 1:
@@ -86,9 +106,27 @@ def time_load_status_updates(filename: str):
 
     return time3, time5
 
+
 def time_add_user():
-    ''' Test load status method '''
+    ''' Test add user method '''
     time3 = 0
+    user_collection3 = main3.init_user_collection()
+    for i in range(NUM):
+        print(f'  Adding user via Assignment_05... {i+1}')
+        start = timer()
+        result = main3.add_user('test123',
+                                'test@gmail.com',
+                                'test',
+                                'tester',
+                                user_collection3)
+        end = timer()
+        if result:
+            if end - start > time3:
+                time3 = end - start
+            result = main3.delete_user('test123', user_collection3)
+            if result:
+                pass
+
     # Load users 5 times via Assignment_05
     # Save max time
     time5 = 0
@@ -102,18 +140,36 @@ def time_add_user():
                                     'tester',
                                     main5.init_user_collection(mongo))
             end = timer()
-            assert result.acknowledged == True
+            assert result.acknowledged
             if end - start > time5:
                 time5 = end - start
             result = main5.delete_user('test123',
                                        main5.init_user_collection(mongo))
-            assert result == True
+            assert result
 
     return time3, time5
+
 
 def time_add_status():
     ''' Test load status method '''
     time3 = 0
+    main3.load_users('accounts.csv', main3.init_user_collection())
+    status_collection3 = main3.init_status_collection()
+    for i in range(NUM):
+        print(f'  Adding status via Assignment_03... {i+1}')
+        start = timer()
+        result = main3.add_status('test123',
+                                  'test123_00001',
+                                  'Some silly status!',
+                                  status_collection3)
+        end = timer()
+        if result:
+            if end - start > time3:
+                time3 = end - start
+            result = main5.delete_status('test123_00001',
+                                         status_collection3)
+            if result:
+                reset_databases(3)
     # Load users 5 times via Assignment_05
     # Save max time
     time5 = 0
@@ -126,14 +182,15 @@ def time_add_status():
                                       'Some silly status!',
                                       main5.init_status_collection(mongo))
             end = timer()
-            assert result.acknowledged == True
+            assert result.acknowledged
             if end - start > time5:
                 time5 = end - start
             result = main5.delete_status('test123_00001',
                                          main5.init_status_collection(mongo))
-            assert result == True
+            assert result
 
     return time3, time5
+
 
 def time_update_user():
     ''' Test load status method '''
@@ -151,7 +208,7 @@ def time_update_user():
                                        'Yesima',
                                        main5.init_user_collection(mongo))
             end = timer()
-            assert result.acknowledged == True
+            assert result.acknowledged
             if end - start > time5:
                 time5 = end - start
             result = main5.update_user('Larisa.Yesima75',
@@ -159,9 +216,10 @@ def time_update_user():
                                        'Larisa',
                                        'Yesima',
                                        main5.init_user_collection(mongo))
-            assert result.acknowledged == True
+            assert result.acknowledged
 
     return time3, time5
+
 
 def time_update_status():
     ''' Test load status method '''
@@ -178,16 +236,17 @@ def time_update_status():
                                          'test status text',
                                          main5.init_status_collection(mongo))
             end = timer()
-            assert result == True
+            assert result
             if end - start > time5:
                 time5 = end - start
             result = main5.update_status('Roshelle.Pironi69_275',
                                          'Roshelle.Pironi69',
                                          'didactic beginner counsel snotty cushion',
                                          main5.init_status_collection(mongo))
-            assert result == True
+            assert result
 
     return time3, time5
+
 
 def time_search_user():
     ''' Time search_user method '''
@@ -208,6 +267,7 @@ def time_search_user():
 
     return time3, time5
 
+
 def time_search_status():
     ''' Time search_status method '''
     time3 = 0
@@ -221,7 +281,7 @@ def time_search_status():
             result = main5.search_status('Roshelle.Pironi69_275',
                                          main5.init_status_collection(mongo))
             end = timer()
-            assert bool(result) == True
+            assert bool(result)
             if end - start > time5:
                 time5 = end - start
 
@@ -240,7 +300,7 @@ def time_delete_user():
             result = main5.delete_user('Roshelle.Pironi69',
                                        main5.init_user_collection(mongo))
             end = timer()
-            assert result == True
+            assert result
             if end - start > time5:
                 time5 = end - start
             result = main5.add_user('Roshelle.Pironi69',
@@ -248,7 +308,7 @@ def time_delete_user():
                                     'Roshelle',
                                     'Pironi',
                                     main5.init_user_collection(mongo))
-            assert result.acknowledged == True
+            assert result.acknowledged
 
     return time3, time5
 
@@ -265,32 +325,34 @@ def time_delete_status():
             result = main5.delete_status('Zondra.Esme53_383',
                                          main5.init_status_collection(mongo))
             end = timer()
-            assert result == True
+            assert result
             if end - start > time5:
                 time5 = end - start
             result = main5.add_status('Zondra.Esme53',
                                       'Zondra.Esme53_383',
                                       'annoying advertisement bounce venomous battle',
                                       main5.init_status_collection(mongo))
-            assert result.acknowledged == True
+            assert result.acknowledged
 
     return time3, time5
 
-def print_times(times: list):
+
+def print_times(time_list: list):
     ''' Print profile results '''
     print()
-    print(f'          Assignment_03  Assignment_05')
-    print(f'          -------------  -------------')
-    print('Results:  '+'{0:.8f}'.format(times[0]).rjust(13) + \
-          '  '+'{0:.8f}'.format(times[1]).rjust(13))
+    print('          Assignment_03  Assignment_05')
+    print('          -------------  -------------')
+    print('Results:  '+f'{time_list[0]:.8f}'.rjust(13) + \
+          '  '+f'{time_list[1]:.8f}'.rjust(13))
     print('\n')
+
 
 if __name__ == '__main__':
     print(f'\nNUM set to: {NUM}')
-    
+
     # Reset databases
     reset_databases(0)
-    
+
     # Final results dictionary
     results = {'load_users': '',
                'load_status_updates': '',
@@ -351,14 +413,14 @@ if __name__ == '__main__':
     print('-----------------------------------------')
     times = time_search_status()
     print_times(times)
-    results['search_status'] = times  
+    results['search_status'] = times
 
     # time_delete_user
     print('\n'+'Timing delete_user for Assignment #3 and #5:')
     print('-----------------------------------------')
     times = time_delete_user()
     print_times(times)
-    results['delete_user'] = times  
+    results['delete_user'] = times
 
     # time_delete_status
     print('\n'+'Timing delete_status for Assignment #3 and #5:')
@@ -372,5 +434,5 @@ if __name__ == '__main__':
     print('--------------------------------------------------')
     for key, value in results.items():
         print(key.ljust(20) + \
-              '  '+'{0:.8f}'.format(value[0]).rjust(13) + \
-              '  '+'{0:.8f}'.format(value[1]).rjust(13))
+              '  '+f'{value[0]:.8f}'.rjust(13) + \
+              '  '+f'{value[1]:.8f}'.rjust(13))
