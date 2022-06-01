@@ -9,7 +9,7 @@ import Assignment_03.socialnetwork_model as sn3
 import Assignment_05.main as main5
 import Assignment_05.socialnetwork_db as sn5
 
-NUM = 1
+NUM = 10
 
 
 def reset_databases(typ: int):
