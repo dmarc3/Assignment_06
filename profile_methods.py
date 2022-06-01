@@ -9,7 +9,7 @@ import Assignment_03.socialnetwork_model as sn3
 import Assignment_05.main as main5
 import Assignment_05.socialnetwork_db as sn5
 
-NUM = 10
+NUM = 1
 
 
 def reset_databases(typ: int):
@@ -57,6 +57,7 @@ def time_load_users(filename: str):
         if result:
             if end - start > time3:
                 time3 = end - start
+        if i != NUM - 1:
             reset_databases(1)
 
     # Load users 5 times via Assignment_05
@@ -80,7 +81,6 @@ def time_load_users(filename: str):
 def time_load_status_updates(filename: str):
     ''' Test load status method '''
     time3 = 0
-    main3.load_users('accounts.csv', main3.init_user_collection())
     status_collection3 = main3.init_status_collection()
     for i in range(NUM):
         print(f'  Loading {filename} via Assignment_03 for time_load_status_updates... {i+1}')
@@ -90,7 +90,8 @@ def time_load_status_updates(filename: str):
         if result:
             if end - start > time3:
                 time3 = end - start
-        reset_databases(2)
+        if i != NUM - 1:
+            reset_databases(2)
     time5 = 0
     for i in range(NUM):
         with sn5.MongoDBConnection() as mongo:
@@ -153,10 +154,15 @@ def time_add_user():
 def time_add_status():
     ''' Test load status method '''
     time3 = 0
-    main3.load_users('accounts.csv', main3.init_user_collection())
+    user_collection3 = main3.init_user_collection()
     status_collection3 = main3.init_status_collection()
     for i in range(NUM):
         print(f'  Adding status via Assignment_03... {i+1}')
+        result = main3.add_user('test123',
+                                'test@gmail.com',
+                                'test',
+                                'tester',
+                                user_collection3)
         start = timer()
         result = main3.add_status('test123',
                                   'test123_00001',
@@ -168,8 +174,6 @@ def time_add_status():
                 time3 = end - start
             result = main5.delete_status('test123_00001',
                                          status_collection3)
-            if result:
-                reset_databases(3)
     # Load users 5 times via Assignment_05
     # Save max time
     time5 = 0
@@ -195,6 +199,20 @@ def time_add_status():
 def time_update_user():
     ''' Test load status method '''
     time3 = 0
+    for i in range(NUM):
+        print(f'  Updating user via Assignment_03... {i+1}')
+        start = timer()
+        result = main3.update_user('Larisa.Yesima75',
+                                   'test@gmail.com',
+                                   'Larisa',
+                                   'Yesima',
+                                   main3.init_user_collection())
+        end = timer()
+        if result:
+            if end - start > time3:
+                time3 = end - start
+            if result:
+                pass
     # Load users 5 times via Assignment_05
     # Save max time
     time5 = 0
@@ -224,6 +242,23 @@ def time_update_user():
 def time_update_status():
     ''' Test load status method '''
     time3 = 0
+    for i in range(NUM):
+        print(f'  Updating status via Assignment_03... {i + 1}')
+        start = timer()
+        result = main3.update_status('Roshelle.Pironi69_275',
+                                     'Roshelle.Pironi69',
+                                     'test status text',
+                                     main3.init_status_collection())
+        end = timer()
+        if result:
+            if end - start > time3:
+                time3 = end - start
+                result = main3.update_status('Roshelle.Pironi69_275',
+                                             'Roshelle.Pironi69',
+                                             'didactic beginner counsel snotty cushion',
+                                             main3.init_status_collection())
+                if result:
+                    pass
     # Update status 5 times via Assignment_05
     # Save max time
     time5 = 0
@@ -251,6 +286,15 @@ def time_update_status():
 def time_search_user():
     ''' Time search_user method '''
     time3 = 0
+    for i in range(NUM):
+        print(f'  Searching user via Assignment_03... {i + 1}')
+        start = timer()
+        result = main3.search_user('Roshelle.Pironi69',
+                                   main3.init_user_collection())
+        end = timer()
+        if bool(result):
+            if end - start > time3:
+                time3 = end - start
     # Load users 5 times via Assignment_05
     # Save max time
     time5 = 0
