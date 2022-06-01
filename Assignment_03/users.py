@@ -46,7 +46,7 @@ class UserCollection:
             logging.info('Modified user %s.', user_id)
             return True
         except self.database.DoesNotExist:
-            logging.error('Unable to user %s.', user_id)
+            logging.error('Unable to modify user %s.', user_id)
             return False
 
     def delete_user(self, user_id):
