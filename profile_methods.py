@@ -9,7 +9,7 @@ import Assignment_03.socialnetwork_model as sn3
 import Assignment_05.main as main5
 import Assignment_05.socialnetwork_db as sn5
 
-NUM = 1
+NUM = 10
 
 
 def reset_databases(typ: int):
@@ -25,15 +25,14 @@ def reset_databases(typ: int):
         del_status = True
     # Assignment 03 Database
     if del_users:
-        main3.init_user_collection()
-        if sn3.Users.table_exists():
-            sn3.Users.drop_table()
-            sn3.db.create_tables([sn3.Users])
+        user_collection3 = main3.init_user_collection()
+        if user_collection3.database.table_exists():
+            user_collection3.database.drop_table()
     if del_status:
-        main3.init_status_collection()
-        if sn3.Status.table_exists():
-            sn3.Status.drop_table()
-            sn3.db.create_tables([sn3.Status])
+        status_collection3 = main3.init_status_collection()
+        if status_collection3.database.table_exists():
+            status_collection3.database.drop_table()
+    sn3.db.create_tables([sn3.Users, sn3.Status])
     # Assignment 05 Database
     if del_users:
         with sn5.MongoDBConnection() as mongo:
@@ -48,22 +47,16 @@ def reset_databases(typ: int):
 def time_load_users(filename: str):
     ''' Test load accounts method '''
     time3 = 0
+    time5 = 0
     user_collection3 = main3.init_user_collection()
     for i in range(NUM):
         print(f'  Loading {filename} via Assignment_03 for time_load_users... {i+1}')
         start = timer()
         result = main3.load_users(filename, user_collection3)
         end = timer()
-        if result:
-            if end - start > time3:
-                time3 = end - start
-        if i != NUM - 1:
-            reset_databases(1)
-
-    # Load users 5 times via Assignment_05
-    # Save max time
-    time5 = 0
-    for i in range(NUM):
+        assert result
+        if end - start > time3:
+            time3 = end - start
         with sn5.MongoDBConnection() as mongo:
             print(f'  Loading {filename} via Assignment_05... {i+1}')
             start = timer()
@@ -72,8 +65,8 @@ def time_load_users(filename: str):
             assert result
             if end - start > time5:
                 time5 = end - start
-            if i != NUM-1:
-                reset_databases(1)
+        if i != NUM - 1:
+            reset_databases(1)
 
     return time3, time5
 
@@ -81,19 +74,16 @@ def time_load_users(filename: str):
 def time_load_status_updates(filename: str):
     ''' Test load status method '''
     time3 = 0
+    time5 = 0
     status_collection3 = main3.init_status_collection()
     for i in range(NUM):
         print(f'  Loading {filename} via Assignment_03 for time_load_status_updates... {i+1}')
         start = timer()
         result = main3.load_status_updates(filename, status_collection3)
         end = timer()
-        if result:
-            if end - start > time3:
-                time3 = end - start
-        if i != NUM - 1:
-            reset_databases(2)
-    time5 = 0
-    for i in range(NUM):
+        assert result
+        if end - start > time3:
+            time3 = end - start
         with sn5.MongoDBConnection() as mongo:
             print(f'  Loading {filename} via Assignment_05 for time_load_status_updates... {i+1}')
             start = timer()
@@ -102,8 +92,8 @@ def time_load_status_updates(filename: str):
             assert result
             if end - start > time5:
                 time5 = end - start
-            if i != NUM - 1:
-                reset_databases(2)
+        if i != NUM - 1:
+            reset_databases(2)
 
     return time3, time5
 
@@ -389,7 +379,7 @@ def time_delete_status():
         result = main3.delete_status('Zondra.Esme53_383',
                                      main3.init_status_collection())
         end = timer()
-        assert result == True
+        assert result
         if end - start > time3:
             time3 = end - start
         result = main3.add_status('Zondra.Esme53',
@@ -397,7 +387,7 @@ def time_delete_status():
                                   'annoying advertisement bounce venomous battle',
                                   main3.init_status_collection())
         end = timer()
-        assert result == True
+        assert result
     # Delete status 5 times via Assignment_05
     # Save max time
     time5 = 0

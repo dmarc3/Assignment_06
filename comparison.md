@@ -10,16 +10,16 @@ Below represents the maximum time (as measured from `timeit.default_timer.timer`
 
 | Method              | Assignment_03 | Assignment_05 |
 | ------------------- | ------------: | ------------: |
-| load_users          | 0.00000000    | 0.09767220    |
-| load_status_updates | 0.00000000    | 5.52536620    |
-| add_user            | 0.00000000    | 0.00295240    |
-| add_status          | 0.00000000    | 0.00285300    |
-| update_user         | 0.00000000    | 0.00339300    |
-| update_status       | 0.00000000    | 0.00328830    |
-| search_user         | 0.00000000    | 0.00374210    |
-| search_status       | 0.00000000    | 0.02611800    |
-| delete_user         | 0.00000000    | 0.00359320    |
-| delete_status       | 0.00000000    | 0.02385740    |
+| load_users          |    0.09297980 |    0.13432020 |
+| load_status_updates |    7.87610780 |    6.03636770 |
+| add_user            |    0.01244940 |    0.00382000 |
+| add_status          |    0.02728510 |    0.01917810 |
+| update_user         |    0.01293120 |    0.00451330 |
+| update_status       |    0.02698020 |    0.00432690 |
+| search_user         |    0.00065890 |    0.00450450 |
+| search_status       |    0.00057320 |    0.00349650 |
+| delete_user         |    0.02364490 |    0.02807180 |
+| delete_status       |    0.01253790 |    0.02256320 |
 
 ## 2. Database Recommendation
 
